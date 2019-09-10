@@ -3,6 +3,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import config from '../config/firebase-config';
 import Header from './Header';
+import BetterHeader from './BetterHeader';
 
 class App extends Component {
   constructor() {
@@ -14,7 +15,7 @@ class App extends Component {
   }
 
   render() {
-    return <Header />;
+    return <BetterHeader />;
   }
 }
 
