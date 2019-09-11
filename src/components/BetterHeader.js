@@ -28,6 +28,43 @@ const styles = theme => ({
   }
 });
 
+const RenderLoginComponent = props => {
+  const { styles } = props;
+  return (
+    <Button
+      color="inherit"
+      className={styles.button}
+      onClick={props.googleLogin}
+    >
+      Login with Google
+    </Button>
+  );
+};
+
+const RenderLoginedComponent = props => {
+  const { styles, state } = props;
+  console.log(styles);
+  return (
+    <div>
+      <Button color="inherit" className={styles.button}>
+        <Avatar
+          alt="profile image"
+          src={`${state.profilePicUrl}`}
+          className={styles.avatar}
+        />
+        {state.avatar}
+      </Button>
+      <Button
+        color="inherit"
+        className={styles.button}
+        onClick={props.googleSignOut}
+      >
+        Sign Out
+      </Button>
+    </div>
+  );
+};
+
 const Header = () => {
   const [state, setState] = useState({
     isLogin: false,
@@ -51,7 +88,7 @@ const Header = () => {
         });
       }
     });
-  });
+  }, []);
   const googleLogin = useCallback(() => {
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithRedirect(provider);
@@ -61,28 +98,6 @@ const Header = () => {
     firebase.auth().signOut();
   }, []);
 
-  const renderLoginComponent = useMemo(() => {
-    console.log();
-    return (
-      <Button color="inherit" onClick={googleLogin}>
-        Login with Google
-      </Button>
-    );
-  }, [googleLogin]);
-
-  const renderLoginedComponent = useMemo(() => {
-    return (
-      <div>
-        <Button color="inherit">
-          <Avatar alt="profile image" src={`${state.profilePicUrl}`} />
-          {this.state.avatar}
-        </Button>
-        <Button color="inherit" onClick={googleSignOut}>
-          Sign Out
-        </Button>
-      </div>
-    );
-  }, [googleSignOut, state.profilePicUrl]);
   return (
     <div>
       <AppBar position="static" color="primary">
@@ -90,11 +105,17 @@ const Header = () => {
           <Typography variant="title" color="inherit">
             Firebase Videos
           </Typography>
-          {state.isLogin
-            ? // <renderLoginedComponent classes={classes} />
-              renderLoginedComponent()
-            : // <renderLoginComponent classes={classes} />
-              renderLoginComponent()}
+          {state.isLogin ? (
+            // <renderLoginedComponent classes={classes} />
+            <RenderLoginComponent styles={styles} googleLogin={googleLogin} />
+          ) : (
+            // <renderLoginComponent classes={classes} />
+            <RenderLoginedComponent
+              styles={styles}
+              state={state}
+              googleSignOut={googleSignOut}
+            />
+          )}
           <Button color="inherit" onClick={googleLogin}></Button>
         </Toolbar>
       </AppBar>
@@ -102,7 +123,7 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default withStyles(styles)(Header);
 
 //useMemoは値の保存
 //useCallbackは関数の保存
